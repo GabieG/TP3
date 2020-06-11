@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" /> 
+    <title>TP3 site Web Efrei</title>
+</head> <!--createTask(1, 1,'delectus aut autem', false);  -->
+<body onload="getTask();"> <!-- au chargement de la page => onload=" les fcts js(); "  -->
+    <h1>TP3 Groupe G L2</h1>
+    <p class="equipe">GIRARD Gabrielle, TOURET Sebastien, DE WATTRIPONT Ambroise</p>
+    <header>
+        <!-- Preview Image -->
+        <img class="logo" src="logo_twitter.png" alt=""> 
+        <section>
+            <nav class="menu"> <!-- navigation du site (MENU) -->
+                <button onclick="showUsers()" type="submit" id="User">Utilisateur</button> <!-- onclick="showUsers()"-->
+                <button onclick="showTasks()" type="submit" id="Task">Tâches</button>     <!-- onclick="showTasks()"-->
+            </nav>
+        </section>
+
+        <form class="decoForm" action="index.html" onsubmit="return false;" method="post" id="Form" name="formulaire">
+            <h2>Formulaire à remplir</h2>
+            <section>
+                <div>  
+                    <label for="Nom"><span>Nom:</span></label>
+                    <input placeholder="Ex : CHEREL" type="text" id="Nom" name="nom" required>
+                    <label for="Prenom"><span>Prénom:</span></label>  
+                    <input placeholder="Ex : Louis" type="text" id="Prenom" name="prenom" required>
+                    <label for="Email"><span>Email:</span></label>
+                    <input placeholder="Ex : Louis.cherel@platypus.academy" type="text" id="Email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                    <label for="select"><span>Votre rôle:</span></label>
+                    <select id="select">
+                            <option value="Enseignant">Enseignant(e)</option>
+                            <option value="Etudiant">Étudiant(e)</option>
+                    </select>
+                </div>
+            </section>
+            <div>
+                <button type="submit" class="ajout" id="ajouter" >Ajouter</button>
+                <button type="submit" onclick="supprimer()">Effacer</button>
+            </div>
+         </form>
+    </header>
+    <main class="decoForm">
+        <table id="tab_User"> <!-- construction du tableau -->
+            <caption class="legende">Utilisateur</caption>
+            <thead>
+                <tr>
+                    <th class="un">Prénom</th>
+                    <th>Nom</th>
+                    <th>E-mail</th>
+                    <th>Rôle</th>
+                </tr>
+            </thead>
+            <tbody class="tbody_user">
+            </tbody>
+        </table>
+
+        <div class="nb_pages"> <!--		Show Numbers Of Rows 		-->
+            <p> Combien de lignes voulez-vous voir ?</p>
+            <select name="state" id="ligneMax">
+                <option value="200">Toutes les lignes</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+        <table id="tab_Task"> <!-- construction du tableau class="task" ?-->
+            <caption class="legende">Tâches</caption>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>ID</th>
+                    <th>Titre</th>
+                    <th>Terminé</th>
+                </tr>
+            </thead>
+            <tbody class="tbody_task">
+            </tbody>
+        </table>
+        <div>
+        <button class="btn" onclick="firstPage()">|<</button>
+          <button class="btn" onclick="previous()">
+            <</button>
+              <span id="pageInfo"></span>
+              <button class="btn" onclick="nextPage()">></button>
+              <button class="btn" onclick="lastPage()">>|</button>
+            
+        </div>
+        
+    </main>
+
+    <script src="main.js"></script> <!-- Uniquement le javascript -->
+
+    <script>
+        function ajouter()
+        {
+            var nom = document.getElementById("Nom");
+            var prenom = document.getElementById("Prenom");
+            var email = document.getElementById("Email");
+
+            if(nom.checkValidity() && prenom.checkValidity() && email.checkValidity())
+            {
+                var form = document.forms.formulaire;
+
+                var element = document.querySelector(".tbody_user");
+                var newtr = document.createElement("tr");
+
+                var td1 = document.createElement("td");
+                var td2 = document.createElement("td");
+                var td3 = document.createElement("td");
+                var td4 = document.createElement("td");
+
+                td1.textContent = form.elements.nom.value;
+                td2.textContent = form.elements.prenom.value;
+                td3.textContent = form.elements.email.value;
+                td4.textContent = form.elements.select.value;
+
+                newtr.appendChild(td1);
+                newtr.appendChild(td2);
+                newtr.appendChild(td3);
+                newtr.appendChild(td4);
+
+                element.appendChild(newtr);
+            }
+        }
+
+        function supprimer()
+        {
+            var element = document.querySelector(".tbody_user");
+            element.innerHTML = "";
+        }
+
+        function submitPoll(first)
+        {
+            if(first == 0)
+            {
+                ajouter();
+            }
+
+            var compteur = 0;
+            var bouton = document.getElementById("ajouter");
+            bouton.onclick = function(){alert("Ce bouton est désactivé")};
+
+            bouton.innerHTML = 'Ajouter '+'('+compteur+')'
+            bouton.classList.add("decompte");
+
+            var timer = setInterval(function(){
+                if(compteur < 10)
+                {
+                    compteur++;
+                    bouton.innerHTML = 'Ajouter '+'('+compteur+')';
+                }
+                else
+                {
+                    clearInterval(timer);
+                    bouton.innerHTML = 'Ajouter';
+                    bouton.onclick = function(){submitPoll(0)};
+                    
+                    bouton.classList.remove("decompte");
+                }
+                
+            }, 1000);  
+        }
+        submitPoll(1);
+    </script>
+    <script>
+        //console.log();
+        
+        const tab_Task = document.querySelector('.tab_Task');
+        const tbody_task = document.querySelector('.tbody_task');
+
+        let requestURL = 'https://jsonplaceholder.typicode.com/todos';
+        let request = new XMLHttpRequest();
+        request.open('GET', requestURL);
+        request.responseType = 'json';
+        request.send();
+
+        request.onload = function() {
+        var data_task = request.response;
+        showData(data_task);
+        }
+
+        function showData(jsonObj) {
+            const taches = jsonObj // data en paramètre et utiliser var data ?
+            const element = document.querySelector(".tbody_task");
+
+            for(let i = 0; i < taches.length; i++) {
+                const newtr = document.createElement("tr");
+
+                const td1 = document.createElement("td");
+                const td2 = document.createElement("td");
+                const td3 = document.createElement("td");
+                const td4 = document.createElement("td");
+
+                td1.textContent = taches[i].userId;
+                td2.textContent = taches[i].id;
+                td3.textContent = taches[i].title;
+                td4.textContent = taches[i].completed;
+
+                newtr.appendChild(td1);
+                newtr.appendChild(td2);
+                newtr.appendChild(td3);
+                newtr.appendChild(td4);
+
+                element.appendChild(newtr);
+            }
+        }
+    
+    </script>
+    
+</body>
+</html>
